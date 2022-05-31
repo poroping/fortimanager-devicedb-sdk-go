@@ -1,0 +1,22 @@
+{{define "cmdb"}}
+package cmdb
+
+import (
+	"encoding/json"
+	"log"
+	"net/url"
+	{{if eq .results.mkey_type "integer"}}"strconv"{{end}}
+
+	"github.com/poroping/forti-sdk-go/v2/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/request"
+)
+
+{{template "cmdb_create" .}}
+
+{{template "cmdb_read" .}}
+
+{{template "cmdb_update" .}}
+
+{{template "cmdb_delete" .}}
+
+{{end}}

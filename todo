@@ -1,0 +1,4 @@
+[] complex cmdb needs to be []interface{} see router bgp for example
+[] handle errors
+[] login func better
+[] dynamic device

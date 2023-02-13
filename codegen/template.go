@@ -45,6 +45,7 @@ func main() {
 			"difflookup":  diffLookup,
 			"readExample": readExample,
 			"debug":       debugx,
+			"ipList":      ipList,
 		}
 		t := template.Must(template.New("main").Funcs(funcMap).ParseGlob("./templates/*.gotmpl"))
 
@@ -65,6 +66,7 @@ func main() {
 		}
 		cmdbResources = append(cmdbResources, tmp)
 
+		render("models", fileName, t, r)
 		render("cmdb", fileName, t, r)
 	}
 	cmdbRender(cmdbResources)
@@ -350,9 +352,9 @@ func typeLookup(s string) string {
 		"option":                 "*string",
 		"ipv4-address":           "*string",
 		"ipv4-address-any":       "*string",
-		"ipv4-classnet":          "*string",
-		"ipv4-classnet-host":     "*string",
-		"ipv4-classnet-any":      "*string",
+		"ipv4-classnet":          "*[]string",
+		"ipv4-classnet-host":     "*[]string",
+		"ipv4-classnet-any":      "*[]string",
 		"ipv4-netmask":           "*string",
 		"ipv4-netmask-any":       "*string",
 		"ipv4-address-multicast": "*string",
@@ -514,6 +516,16 @@ func readExample(name, typ string) string {
 		return ""
 	}
 	return string(example)
+}
+
+func ipList(s string) bool {
+	iplists := []string{"ipv4-classnet", "ipv4-classnet-host", "ipv4-classnet-any"}
+	for _, b := range iplists {
+		if b == s {
+			return true
+		}
+	}
+	return false
 }
 
 // Entire swagger schema

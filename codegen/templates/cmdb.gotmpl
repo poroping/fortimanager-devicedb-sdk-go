@@ -7,7 +7,7 @@ import (
 	"net/url"
 	{{if eq .results.mkey_type "integer"}}"strconv"{{end}}
 
-	"github.com/poroping/forti-sdk-go/v2/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/request"
 )
 
@@ -18,5 +18,7 @@ import (
 {{template "cmdb_update" .}}
 
 {{template "cmdb_delete" .}}
+
+{{if eq .results.category "table"}}{{template "cmdb_list" .}}{{end}}
 
 {{end}}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/poroping/forti-sdk-go/v2/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/request"
 )
 
@@ -96,4 +96,30 @@ func (c *Client) DeleteSystemIpsUrlfilterDns6(mkey string, params *models.CmdbRe
 
 	err := request.Delete(c.config, req)
 	return err
+}
+
+func (c *Client) ListSystemIpsUrlfilterDns6(params *models.CmdbRequestParams) (*[]models.SystemIpsUrlfilterDns6, error) {
+	req := &models.CmdbRequest{}
+	req.HTTPMethod = "GET"
+	req.Payload = nil
+	req.Path = models.CmdbBasePath + models.SystemIpsUrlfilterDns6Path
+	req.Params = *params
+
+	res, err := request.Read(c.config, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// marshal/unmarshal results
+
+	if tmp, ok := res.Results.([]interface{}); ok {
+		jsontmp, err := json.Marshal(tmp)
+		if err != nil {
+			return nil, err
+		}
+		v := []models.SystemIpsUrlfilterDns6{}
+		json.Unmarshal(jsontmp, &v)
+		return &v, nil
+	}
+	return nil, err
 }

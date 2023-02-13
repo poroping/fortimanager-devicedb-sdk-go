@@ -6,12 +6,11 @@ import (
 	"log"
 	"strings"
 
-	"github.com/poroping/forti-sdk-go/v2/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/config"
-	fmgmodels "github.com/poroping/fortimanager-devicedb-sdk-go/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 )
 
-func Fmg2FgtResp(r1 *fmgmodels.CmdbResponse) (*models.CmdbResponse, error) {
+func Fmg2FgtResp(r1 *models.FmgCmdbResponse) (*models.CmdbResponse, error) {
 	r2 := &models.CmdbResponse{}
 	res := make([]interface{}, 0)
 	res = append(res, r1.Result[0].Data)
@@ -28,8 +27,8 @@ func Fmg2FgtResp(r1 *fmgmodels.CmdbResponse) (*models.CmdbResponse, error) {
 	return r2, nil
 }
 
-func Fgt2FmgReq(c *config.Config, r1 *models.CmdbRequest) (*fmgmodels.CmdbRequest, error) {
-	r2 := &fmgmodels.CmdbRequest{}
+func Fgt2FmgReq(c *config.Config, r1 *models.CmdbRequest) (*models.FmgCmdbRequest, error) {
+	r2 := &models.FmgCmdbRequest{}
 	if r1.HTTPMethod == "POST" {
 		r2.Method = "add"
 	} else if r1.HTTPMethod == "PUT" {
@@ -42,14 +41,21 @@ func Fgt2FmgReq(c *config.Config, r1 *models.CmdbRequest) (*fmgmodels.CmdbReques
 	if r1.Params.Vdom == "" {
 		r1.Params.Vdom = "root"
 	}
+	r1.Params.Vdom = "vdom/" + r1.Params.Vdom
+	if r1.Params.Vdom == "vdom/global" {
+		r1.NoVdom = true
+	}
+	if r1.NoVdom {
+		r1.Params.Vdom = "global"
+	}
 	targetDevice := c.FwTarget
 	if r1.Params.Scope != "" {
 		targetDevice = r1.Params.Scope
 	}
-	path := strings.TrimPrefix(r1.Path, "/api/v2/cmdb/")
+	path := strings.TrimPrefix(r1.Path, "/pm/config/device/")
 	r2.ID = 1
 	r2.Verbose = 1
-	params := fmgmodels.CmdbRequestPayload{}
+	params := models.FmgCmdbRequestPayload{}
 	if r1.Payload != nil {
 		var data interface{}
 		log.Println(string(r1.Payload))
@@ -60,7 +66,7 @@ func Fgt2FmgReq(c *config.Config, r1 *models.CmdbRequest) (*fmgmodels.CmdbReques
 		}
 		params.Data = data
 	}
-	params.URL = fmt.Sprintf("/pm/config/device/%s/vdom/%s/%s", targetDevice, r1.Params.Vdom, path)
+	params.URL = fmt.Sprintf("/pm/config/device/%s/%s/%s", targetDevice, r1.Params.Vdom, path)
 	r2.Params = append(r2.Params, params)
 	r2.Session = c.Auth.Session
 	return r2, nil

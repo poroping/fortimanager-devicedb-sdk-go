@@ -10,9 +10,8 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/poroping/forti-sdk-go/v2/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/config"
-	fmgmodels "github.com/poroping/fortimanager-devicedb-sdk-go/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/utils"
 )
 
@@ -37,7 +36,7 @@ func CreateUpdate(c *config.Config, r *models.CmdbRequest) (*models.CmdbResponse
 		return nil, err
 	}
 
-	response := &fmgmodels.CmdbResponse{}
+	response := &models.FmgCmdbResponse{}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		log.Printf("[ERROR] Error reading response body during CREATE/UPDATE %s", err)
@@ -93,7 +92,7 @@ func Read(c *config.Config, r *models.CmdbRequest) (*models.CmdbResponse, error)
 		return nil, err
 	}
 
-	response := &fmgmodels.CmdbResponse{}
+	response := &models.FmgCmdbResponse{}
 	err = json.Unmarshal(body, response)
 	if err != nil {
 		log.Printf("[ERROR] Error reading response body during READ")
@@ -133,7 +132,7 @@ func Delete(c *config.Config, r *models.CmdbRequest) (err error) {
 		return err
 	}
 
-	response := fmgmodels.CmdbResponse{}
+	response := models.FmgCmdbResponse{}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		log.Printf("[ERROR] Error reading response body during DELETE")
@@ -148,7 +147,7 @@ func Delete(c *config.Config, r *models.CmdbRequest) (err error) {
 	return nil
 }
 
-func fortiErrorCheck(body []byte, res *fmgmodels.CmdbResponse) (err error) {
+func fortiErrorCheck(body []byte, res *models.FmgCmdbResponse) (err error) {
 	if len(res.Result) < 1 || res.Result == nil {
 		return fmt.Errorf("[ERROR] Result length < 1")
 	}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/poroping/forti-sdk-go/v2/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/request"
 )
 
@@ -96,4 +96,30 @@ func (c *Client) DeleteUserPop3(mkey string, params *models.CmdbRequestParams) e
 
 	err := request.Delete(c.config, req)
 	return err
+}
+
+func (c *Client) ListUserPop3(params *models.CmdbRequestParams) (*[]models.UserPop3, error) {
+	req := &models.CmdbRequest{}
+	req.HTTPMethod = "GET"
+	req.Payload = nil
+	req.Path = models.CmdbBasePath + models.UserPop3Path
+	req.Params = *params
+
+	res, err := request.Read(c.config, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// marshal/unmarshal results
+
+	if tmp, ok := res.Results.([]interface{}); ok {
+		jsontmp, err := json.Marshal(tmp)
+		if err != nil {
+			return nil, err
+		}
+		v := []models.UserPop3{}
+		json.Unmarshal(jsontmp, &v)
+		return &v, nil
+	}
+	return nil, err
 }

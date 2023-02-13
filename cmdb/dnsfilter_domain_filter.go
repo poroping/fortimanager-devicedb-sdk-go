@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/poroping/forti-sdk-go/v2/models"
+	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 	"github.com/poroping/fortimanager-devicedb-sdk-go/request"
 )
 
@@ -97,4 +97,30 @@ func (c *Client) DeleteDnsfilterDomainFilter(mkey string, params *models.CmdbReq
 
 	err := request.Delete(c.config, req)
 	return err
+}
+
+func (c *Client) ListDnsfilterDomainFilter(params *models.CmdbRequestParams) (*[]models.DnsfilterDomainFilter, error) {
+	req := &models.CmdbRequest{}
+	req.HTTPMethod = "GET"
+	req.Payload = nil
+	req.Path = models.CmdbBasePath + models.DnsfilterDomainFilterPath
+	req.Params = *params
+
+	res, err := request.Read(c.config, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// marshal/unmarshal results
+
+	if tmp, ok := res.Results.([]interface{}); ok {
+		jsontmp, err := json.Marshal(tmp)
+		if err != nil {
+			return nil, err
+		}
+		v := []models.DnsfilterDomainFilter{}
+		json.Unmarshal(jsontmp, &v)
+		return &v, nil
+	}
+	return nil, err
 }

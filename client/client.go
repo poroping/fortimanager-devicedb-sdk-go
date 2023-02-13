@@ -101,7 +101,7 @@ func (c *FortiSDKClient) Login() {
 	if err != nil {
 		log.Fatalf("[FATAL] Error getting body from login response")
 	}
-	m := &models.CmdbResponse{}
+	m := &models.FmgCmdbResponse{}
 	err = json.Unmarshal(body, m)
 	if err != nil {
 		log.Fatalf("[FATAL] Error unmarshalling login response")
@@ -110,5 +110,45 @@ func (c *FortiSDKClient) Login() {
 		c.Config.Auth.Session = *m.Session
 	} else {
 		log.Print("[ERROR] Session not found in login response.")
+	}
+}
+
+func (c *FortiSDKClient) Logout() {
+	if c.Config.Auth.Session == "" {
+		return
+	}
+	s := fmt.Sprintf(`{
+		"id": 1,
+		"method": "exec",
+		"params": [
+			{
+				"url": "/sys/logout"
+			}
+		],
+		"session": %s
+	}`, c.Config.Auth.Session)
+	req, err := http.NewRequest("POST", fmt.Sprintf("https://%s/jsonrpc", c.Config.Auth.Hostname), strings.NewReader(s))
+	if err != nil {
+		log.Print("[INFO] Error creating logout request")
+	}
+	res, err := c.Config.HTTPCon.Do(req)
+	if err != nil {
+		log.Print("[WARN] Error performing logout request, %v", err)
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Print("[WARN] Error getting body from logout response")
+	}
+	m := &models.FmgCmdbResponse{}
+	err = json.Unmarshal(body, m)
+	if err != nil {
+		log.Print("[WARN] Error unmarshalling logout response")
+	}
+	if m.Result[0].Status.Message == "OK" {
+		log.Print("[INFO] Successfully logged out")
+	} else {
+		log.Print("[ERROR] Error during logout. Check admin session is not hanging")
 	}
 }

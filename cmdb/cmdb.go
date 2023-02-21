@@ -14,6 +14,10 @@ type Client struct {
 }
 
 type Endpoints interface {
+	CreateMetafields(payload *models.Metafields, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
+	ReadMetafields(mkey string, params *models.CmdbRequestParams) (*models.Metafields, error)
+	UpdateMetafields(mkey string, payload *models.Metafields, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
+	DeleteMetafields(mkey string, params *models.CmdbRequestParams) error
 	CreateAlertemailSetting(payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)
 	ReadAlertemailSetting(mkey string, params *models.CmdbRequestParams) (*models.AlertemailSetting, error)
 	UpdateAlertemailSetting(mkey string, payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)

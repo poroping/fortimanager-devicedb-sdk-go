@@ -29,6 +29,7 @@ type FmgCmdbRequestPayload struct {
 
 type CmdbRequestParams struct {
 	Action               string    `json:"action,omitempty"`
+	Adom                 string    `json:"adom,omitempty"`
 	AllowAppend          *bool     `json:"allow_append,omitempty"`
 	After                string    `json:"after,omitempty"`
 	Before               string    `json:"before,omitempty"`

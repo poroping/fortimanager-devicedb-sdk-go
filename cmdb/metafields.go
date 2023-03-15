@@ -8,11 +8,11 @@ import (
 	"github.com/poroping/fortimanager-devicedb-sdk-go/models"
 )
 
-func createMetafieldPath(vdom string) string {
-	if vdom == "" {
-		vdom = "root"
+func createMetafieldPath(adom string) string {
+	if adom == "" {
+		adom = "root"
 	}
-	return fmt.Sprintf("pm/config/adom/%s/obj/fmg/variable/", vdom)
+	return fmt.Sprintf("pm/config/adom/%s/obj/fmg/variable/", adom)
 }
 
 func (c *Client) CreateMetafields(payload *models.Metafields, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error) {
@@ -72,6 +72,13 @@ func (c *Client) UpdateMetafields(mkey string, payload *models.Metafields, param
 	if err != nil {
 		return nil, err
 	}
+
+	if *res.Session == "notexist" && params.AllowAppend != nil {
+		if *params.AllowAppend {
+			return c.CreateMetafields(payload, params)
+		}
+	}
+
 	return res, nil
 }
 

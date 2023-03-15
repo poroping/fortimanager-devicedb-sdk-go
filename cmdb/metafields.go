@@ -73,8 +73,8 @@ func (c *Client) UpdateMetafields(mkey string, payload *models.Metafields, param
 		return nil, err
 	}
 
-	if *res.Session == "notexist" && params.AllowAppend != nil {
-		if *params.AllowAppend {
+	if res.Session != nil && params.AllowAppend != nil {
+		if *res.Session == "notexist" && *params.AllowAppend {
 			return c.CreateMetafields(payload, params)
 		}
 	}

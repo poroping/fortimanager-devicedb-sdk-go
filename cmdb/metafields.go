@@ -19,7 +19,7 @@ func (c *Client) CreateMetafields(payload *models.Metafields, params *models.Cmd
 	req := &models.FmgCmdbRequest{}
 	p := &models.FmgCmdbRequestPayload{}
 	p.Data = payload
-	p.URL = createMetafieldPath(params.Vdom)
+	p.URL = createMetafieldPath(params.Adom)
 	req.Params = append(req.Params, *p)
 	req.Method = "add"
 
@@ -33,7 +33,7 @@ func (c *Client) CreateMetafields(payload *models.Metafields, params *models.Cmd
 func (c *Client) ReadMetafields(mkey string, params *models.CmdbRequestParams) (*models.Metafields, error) {
 	req := &models.FmgCmdbRequest{}
 	p := &models.FmgCmdbRequestPayload{}
-	p.URL = createMetafieldPath(params.Vdom) + mkey
+	p.URL = createMetafieldPath(params.Adom) + mkey
 	req.Params = append(req.Params, *p)
 	req.Method = "get"
 
@@ -64,7 +64,7 @@ func (c *Client) UpdateMetafields(mkey string, payload *models.Metafields, param
 	req := &models.FmgCmdbRequest{}
 	p := &models.FmgCmdbRequestPayload{}
 	p.Data = payload
-	p.URL = createMetafieldPath(params.Vdom) + mkey
+	p.URL = createMetafieldPath(params.Adom) + mkey
 	req.Params = append(req.Params, *p)
 	req.Method = "update"
 
@@ -85,7 +85,7 @@ func (c *Client) UpdateMetafields(mkey string, payload *models.Metafields, param
 func (c *Client) DeleteMetafields(mkey string, params *models.CmdbRequestParams) error {
 	req := &models.FmgCmdbRequest{}
 	p := &models.FmgCmdbRequestPayload{}
-	p.URL = createMetafieldPath(params.Vdom) + mkey
+	p.URL = createMetafieldPath(params.Adom) + mkey
 	req.Params = append(req.Params, *p)
 	req.Method = "delete"
 

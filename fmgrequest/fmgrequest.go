@@ -31,6 +31,7 @@ func Create(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
+	log.Printf("[DEBUG] Body: %s", string(body))
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +44,43 @@ func Create(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse
 	}
 
 	err = fortiErrorCheck(body, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, err
+}
+
+func CreateNoSession(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponseNoSession, error) {
+	req, err := newRequest(*c, r)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPCon.Do(req)
+	if err != nil {
+		// handle 404s (search for resource on delete at least)
+		return nil, err
+	}
+
+	log.Printf("[DEBUG] Status code: %d", res.StatusCode)
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	log.Printf("[DEBUG] Body: %s", string(body))
+	if err != nil {
+		return nil, err
+	}
+
+	response := &models.FmgCmdbResponseNoSession{}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Printf("[ERROR] Error reading response body during CREATE/UPDATE %s", err)
+		return nil, err
+	}
+
+	err = fortiErrorCheckNoSession(body, response)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +121,8 @@ func Update(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse
 		empty := &models.FmgCmdbResponse{}
 		// shitmix to allow determine object doesn't exist needs some refactoring
 		s := "notexist"
+		f := false
+		empty.Exists = &f
 		empty.Session = &s
 		empty.Result = append(empty.Result, models.Result{})
 		return empty, nil
@@ -92,6 +132,8 @@ func Update(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse
 	if err != nil {
 		return nil, err
 	}
+	t := true
+	response.Exists = &t
 
 	return response, err
 }
@@ -127,6 +169,9 @@ func Read(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse, 
 	// return empty if object doesn't exist
 	if response.Result[0].Status.Message == "Object does not exist" {
 		empty := &models.FmgCmdbResponse{}
+		log.Printf("[WARN] Object not found, marking exist as false")
+		f := false
+		empty.Exists = &f
 		empty.Result = append(empty.Result, models.Result{})
 		return empty, nil
 	}
@@ -135,6 +180,9 @@ func Read(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse, 
 	if err != nil {
 		return nil, err
 	}
+
+	t := true
+	response.Exists = &t
 
 	return response, err
 }
@@ -171,6 +219,16 @@ func Delete(c *config.Config, r *models.FmgCmdbRequest) (err error) {
 		return err
 	}
 
+	return nil
+}
+
+func fortiErrorCheckNoSession(body []byte, res *models.FmgCmdbResponseNoSession) (err error) {
+	if len(res.Result) < 1 || res.Result == nil {
+		return fmt.Errorf("[ERROR] Result length < 1")
+	}
+	if res.Result[0].Status.Code != 0 {
+		return fmt.Errorf("[ERROR] %s", res.Result[0].Status.Message)
+	}
 	return nil
 }
 

@@ -22,6 +22,11 @@ type Endpoints interface {
 	ReadMetafieldDynamicMapping(variable, mkey string, params *models.CmdbRequestParams) (*models.DynamicMapping, error)
 	UpdateMetafieldDynamicMapping(variable, mkey string, payload *models.DynamicMapping, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
 	DeleteMetafieldDynamicMapping(variable, mkey string, params *models.CmdbRequestParams) error
+	CreateModelDevice(payload *models.ModelDevice, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
+	ReadModelDevice(mkey string, params *models.CmdbRequestParams) (*models.Device, error)
+	UpdateModelDevice(mkey string, payload *models.ModelDevice, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
+	DeleteModelDevice(mkey string, params *models.CmdbRequestParams) error
+
 	CreateAlertemailSetting(payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)
 	ReadAlertemailSetting(mkey string, params *models.CmdbRequestParams) (*models.AlertemailSetting, error)
 	UpdateAlertemailSetting(mkey string, payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)

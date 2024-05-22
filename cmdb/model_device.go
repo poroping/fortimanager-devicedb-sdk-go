@@ -34,10 +34,12 @@ func (c *Client) CreateModelDevice(payload *models.ModelDevice, params *models.C
 		return nil, err
 	}
 
-	if *exists {
-		log.Printf("[WARN] Device already exists, attempting to update")
-		// return c.ReadModelDevice(*payload.Device.Name, params)
-		return c.UpdateModelDevice(*payload.Device.Name, payload, params)
+	if exists != nil {
+		if *exists {
+			log.Printf("[WARN] Device already exists, attempting to update")
+			// return c.ReadModelDevice(*payload.Device.Name, params)
+			return c.UpdateModelDevice(*payload.Device.Name, payload, params)
+		}
 	}
 
 	p.URL = createModelDevicePath()
@@ -61,6 +63,10 @@ func ModelDeviceExists(c *Client, mkey string, params *models.CmdbRequestParams)
 	res, err := fmgrequest.Read(c.config, req)
 	if err != nil {
 		return nil, err
+	}
+
+	if res.Exists == nil {
+		log.Printf("[WARN] ModelDeviceExist seems to have failed and exists in null")
 	}
 
 	return res.Exists, nil
@@ -104,7 +110,6 @@ func (c *Client) UpdateModelDevice(mkey string, payload *models.ModelDevice, par
 
 	// Loads of attributes are read only
 	data.Desc = payload.Device.Desc
-	data.Flags = payload.Device.Flags
 	data.PreferImgVer = payload.Device.PreferImgVer
 
 	p.Data = data

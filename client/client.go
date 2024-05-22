@@ -107,7 +107,9 @@ func (c *FortiSDKClient) Login() {
 		log.Fatalf("[FATAL] Error unmarshalling login response")
 	}
 	if m.Session != nil {
-		c.Config.Auth.Session = *m.Session
+		if v, ok := m.Session.(string); ok {
+			c.Config.Auth.Session = v
+		}
 	} else {
 		log.Print("[ERROR] Session not found in login response.")
 	}

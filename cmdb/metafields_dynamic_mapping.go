@@ -74,8 +74,11 @@ func (c *Client) UpdateMetafieldDynamicMapping(variable, mkey string, payload *m
 	}
 
 	if res.Session != nil && params.AllowAppend != nil {
-		if *res.Session == "notexist" && *params.AllowAppend {
-			return c.CreateMetafieldDynamicMapping(variable, payload, params)
+		if v, ok := res.Session.(string); ok {
+			if v == "notexist" && *params.AllowAppend {
+				return c.CreateMetafieldDynamicMapping(variable, payload, params)
+
+			}
 		}
 	}
 

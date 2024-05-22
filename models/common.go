@@ -71,9 +71,15 @@ type CmdbResponse struct {
 }
 
 type FmgCmdbResponse struct {
-	ID      int64    `json:"id,omitempty"`
-	Result  []Result `json:"result,omitempty"`
-	Session *string  `json:"session,omitempty"`
+	ID      int64       `json:"id,omitempty"`
+	Result  []Result    `json:"result,omitempty"`
+	Session interface{} `json:"session,omitempty"`
+	Exists  *bool
+}
+
+type FmgCmdbResponseNoSession struct {
+	ID     int64    `json:"id,omitempty"`
+	Result []Result `json:"result,omitempty"`
 }
 
 type Result struct {
@@ -85,4 +91,16 @@ type Result struct {
 type Status struct {
 	Code    int64  `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
+}
+
+type DynamicMapping struct {
+	Scope []Scope `json:"_scope,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+type Scope struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+	Vdom *string `json:"vdom,omitempty"`
+	Text *string `json:"text,omitempty"`
 }

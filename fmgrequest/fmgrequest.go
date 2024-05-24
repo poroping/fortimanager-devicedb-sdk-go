@@ -187,6 +187,42 @@ func Read(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse, 
 	return response, err
 }
 
+func Read2(c *config.Config, r *models.FmgCmdbRequest) (*models.FmgCmdbResponse, error) {
+	req, err := newRequest(*c, r)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPCon.Do(req)
+	if err != nil {
+		// handle 404s (search for resource on delete at least)
+		return nil, err
+	}
+
+	log.Printf("[DEBUG] Status code: %d", res.StatusCode)
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &models.FmgCmdbResponse{}
+	err = json.Unmarshal(body, response)
+	if err != nil {
+		log.Printf("[ERROR] Error reading response body during READ")
+		return nil, err
+	}
+
+	err = fortiErrorCheck(body, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, err
+}
+
 func Delete(c *config.Config, r *models.FmgCmdbRequest) (err error) {
 	req, err := newRequest(*c, r)
 	if err != nil {

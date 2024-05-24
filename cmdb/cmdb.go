@@ -26,6 +26,9 @@ type Endpoints interface {
 	ReadModelDevice(mkey string, params *models.CmdbRequestParams) (*models.Device, error)
 	UpdateModelDevice(mkey string, payload *models.ModelDevice, params *models.CmdbRequestParams) (*models.FmgCmdbResponse, error)
 	DeleteModelDevice(mkey string, params *models.CmdbRequestParams) error
+	ReadTask(mkey int64, params *models.CmdbRequestParams) (*models.TaskResultData, error)
+	ReadTaskUntilCompletion(mkey int64, params *models.CmdbRequestParams) (*models.TaskResultData, error)
+	CreateInstallPackage(payload *models.InstallPackagePayload, params *models.CmdbRequestParams) (*models.InstallPackageResponse, error)
 
 	CreateAlertemailSetting(payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)
 	ReadAlertemailSetting(mkey string, params *models.CmdbRequestParams) (*models.AlertemailSetting, error)

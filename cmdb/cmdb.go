@@ -29,6 +29,8 @@ type Endpoints interface {
 	ReadTask(mkey int64, params *models.CmdbRequestParams) (*models.TaskResultData, error)
 	ReadTaskUntilCompletion(mkey int64, params *models.CmdbRequestParams) (*models.TaskResultData, error)
 	CreateInstallPackage(payload *models.InstallPackagePayload, params *models.CmdbRequestParams) (*models.InstallPackageResponse, error)
+	CreateInstallDevice(payload *models.InstallDevicePayload, params *models.CmdbRequestParams) (*models.InstallDeviceResponse, error)
+	CreateInstallScript(payload *models.InstallScriptPayload, params *models.CmdbRequestParams) (*models.InstallScriptResponse, error)
 
 	CreateAlertemailSetting(payload *models.AlertemailSetting, params *models.CmdbRequestParams) (*models.CmdbResponse, error)
 	ReadAlertemailSetting(mkey string, params *models.CmdbRequestParams) (*models.AlertemailSetting, error)
